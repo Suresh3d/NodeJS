@@ -1,0 +1,110 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+
+    $("document").ready(function(){
+            $("#search").on("keyup", function() {
+                    var value = $(this).val().toLowerCase();
+                    $("#table tr:not(#header)").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+             var socket = io();
+                $(()=>{
+                    $("#send").click(()=>{
+                    //     addMsgs({name:'Suresh', message:'hello'});
+                    //      getMessages();
+                        var message = {ODT_Name:$("#ODT_name").val(),Tags:$("#Tags").val()};
+                        postMessage(message);
+                        //getMessages();
+
+                    })
+                //  getMessages();
+                })
+                socket.on('message',addMsgs);
+                function addMsgs(message){
+                    $("#table").append(`<tr><td> ${message.S_no} </td> <td> ${message.ODT_Name} </td> <td id='tags'>${message.Tags}</td></tr>`);
+                }
+                function getMessages(){
+                    $.get('https://3000-e9fa050d-93d0-4819-a126-18842a0e20fa.ws-ap01.gitpod.io/messages',(data)=>{
+                        data.forEach(addMsgs)
+
+                    })
+                }
+
+                function postMessage(message){
+                    $.post('https://3000-e9fa050d-93d0-4819-a126-18842a0e20fa.ws-ap01.gitpod.io/messages',message)
+
+                }
+        });
+           /* var socket = io();
+                $(()=>{
+                    $("#send").click(()=>{
+                    //     addMsgs({name:'Suresh', message:'hello'});
+                    //      getMessages();
+                        var message = {ODT_Name:$("#ODT_name").val(),Tags:$("#Tags").val()};
+                        postMessage(message);
+                        //getMessages();
+
+                    })
+                //  getMessages();
+                })
+                socket.on('message',addMsgs);
+                function addMsgs(message){
+                    $("#table").append(`<tr><td> ${message.S_no} </td> <td> ${message.ODT_Name} </td> <td id='tags'>${message.Tags}</td></tr>`);
+                }
+                function getMessages(){
+                    $.get('https://3000-e9fa050d-93d0-4819-a126-18842a0e20fa.ws-ap01.gitpod.io/messages',(data)=>{
+                        data.forEach(addMsgs)
+
+                    })
+                }
+
+                function postMessage(message){
+                    $.post('https://3000-e9fa050d-93d0-4819-a126-18842a0e20fa.ws-ap01.gitpod.io/messages',message)
+
+                }*/
+
+    </script>
+    <style>
+        table,td,th{
+            border:1px solid black;
+        }
+        #tags{
+            display:none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<br>
+<div class = "jumbotron">
+    <h1 class="display-4"> ODT Details</h1>
+    <br>
+    <input id = "ODT_name" class = "form-control" placeholder="ODT Name">
+    <br>
+    <textarea id = "Tags" class = "form-control" placeholder="Tag"></textarea>
+    <br>
+    <button id= "send" class="btn btn-success">Submit</button>
+</div>
+
+ <input type="text" id="search" placeholder="Search Items...">
+
+<div id = "messages">
+    <table id="table">
+        <tr id = "header">
+            <th>S.No</th>
+            <th>ODT Name</th>
+            <th id="tags">Tag</th>
+        </tr>
+    </table>
+</div>
+</div>
+</body>
